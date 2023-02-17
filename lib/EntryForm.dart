@@ -42,11 +42,15 @@ class _EntryFormState extends State<EntryForm> {
         body: Form(
           key: _formKey,
           child: Column(
-            children: const [
-              Text("SIN"),
-              TextField(),
-              Text("Dairy Collected"),
-              TextField()
+            children: [
+              const Text("SIN"),
+              const TextField(),
+              const Text("Dairy Collected"),
+              const TextField(),
+              TextButton(
+                onPressed: () {},
+                child: const Text('Submit entry'),
+              )
             ],
           ),
         ));
