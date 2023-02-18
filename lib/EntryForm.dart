@@ -36,6 +36,9 @@ class _EntryFormState extends State<EntryForm> {
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    String _SIN = "default";
+    String _dairy_collected = "default";
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Color.fromARGB(255, 255, 200, 3),
@@ -45,13 +48,29 @@ class _EntryFormState extends State<EntryForm> {
           child: Column(
             children: [
               const Text("SIN"),
-              const TextField(),
+              TextFormField(
+                onSaved: (newValue) {
+                  _SIN = newValue!;
+                },
+              ),
               const Text("Dairy Collected"),
-              const TextField(),
+              TextFormField(
+                onSaved: (newValue) {
+                  _dairy_collected = newValue!;
+                },
+              ),
               TextButton(
                 onPressed: () {
-                  print("Pressed button!");
-                  createNewRow();
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    print("Pressed button!");
+                    print("info collected from form:");
+                    print(_SIN);
+                    print(_dairy_collected);
+                    createNewRow(_SIN, _dairy_collected);
+                  }
+
+                  //
                 },
                 child: const Text('Submit entry'),
               )
