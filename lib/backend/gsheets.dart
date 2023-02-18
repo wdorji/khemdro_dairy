@@ -46,15 +46,18 @@ Future<void> createNewRow(sin, dairy_collected) async {
   // Call the `spreadsheets.values.append` method of the Sheets API client to append the row.
   final request = ValueRange()
     ..values = [newRow.map((value) => value.toString()).toList()];
-  final response = await sheetsApi.spreadsheets.values.append(
-      request, spreadsheetId, range,
-      valueInputOption: 'USER_ENTERED', insertDataOption: 'INSERT_ROWS');
+  final response =
+      await sheetsApi.spreadsheets.values.get(spreadsheetId, range);
+  // .append(
+  //     request, spreadsheetId, range,
+  //     valueInputOption: 'USER_ENTERED', insertDataOption: 'INSERT_ROWS');
 
   final values = response.values;
-
-  for (var i = 0; i < values.length; i++) {
+  int rowIndex = 0;
+  for (var i = 0; i < values!.length; i++) {
     if (values[i][0] == sin) {
       // Row found!
+      rowIndex = i;
       print("Row found at index $i");
       break;
     }
@@ -63,7 +66,7 @@ Future<void> createNewRow(sin, dairy_collected) async {
   if (rowIndex != -1) {
     final rangeToUpdate = "January!D${rowIndex + 1}:D${rowIndex + 1}";
     final valuesToUpdate = [
-      ["Jane", "Doe"],
+      [dairy_collected],
     ];
     final updateValuesRequest = ValueRange.fromJson({"values": valuesToUpdate});
 
