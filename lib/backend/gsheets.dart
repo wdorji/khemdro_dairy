@@ -24,7 +24,7 @@ Future<AutoRefreshingAuthClient> authenticate() async {
 }
 
 // Create a function to create a new worksheet in your Google spreadsheet file.
-Future<void> createNewRow() async {
+Future<void> createNewRow(sin, dairy_collected) async {
   print("creating new row");
   // Authenticate your app.
   final client = await authenticate();
@@ -32,7 +32,7 @@ Future<void> createNewRow() async {
   final sheetsApi = SheetsApi(client);
   // Set the spreadsheet ID and range of the sheet you want to write to.
   final spreadsheetId = '1iHLSVZJ3uFUQgbQtviB-hjZBGE1_CSfu0xLwNpfMdFc';
-  final range = 'January!A1:E';
+  final range = 'January!C:C';
 
   // Create a list of values to write to the row.
   final newRow = [
@@ -49,4 +49,31 @@ Future<void> createNewRow() async {
   final response = await sheetsApi.spreadsheets.values.append(
       request, spreadsheetId, range,
       valueInputOption: 'USER_ENTERED', insertDataOption: 'INSERT_ROWS');
+
+  final values = response.values;
+
+  for (var i = 0; i < values.length; i++) {
+    if (values[i][0] == sin) {
+      // Row found!
+      print("Row found at index $i");
+      break;
+    }
+  }
+
+  if (rowIndex != -1) {
+    final rangeToUpdate = "January!D${rowIndex + 1}:D${rowIndex + 1}";
+    final valuesToUpdate = [
+      ["Jane", "Doe"],
+    ];
+    final updateValuesRequest = ValueRange.fromJson({"values": valuesToUpdate});
+
+    final updateResponse = await sheetsApi.spreadsheets.values.update(
+      updateValuesRequest,
+      spreadsheetId,
+      rangeToUpdate,
+      valueInputOption: "USER_ENTERED",
+    );
+
+    print(updateResponse.updatedCells);
+  }
 }
