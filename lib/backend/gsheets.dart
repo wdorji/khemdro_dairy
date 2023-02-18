@@ -32,27 +32,23 @@ Future<void> createNewRow(sin, dairy_collected) async {
   final sheetsApi = SheetsApi(client);
   // Set the spreadsheet ID and range of the sheet you want to write to.
   final spreadsheetId = '1iHLSVZJ3uFUQgbQtviB-hjZBGE1_CSfu0xLwNpfMdFc';
-  final range = 'January!C:C';
 
-  // Create a list of values to write to the row.
-  final newRow = [
-    'John',
-    'Doe',
-    'john.doe@example.com',
-    '555-555-5555',
-    'New York'
-  ];
+  // get date
+  List date = getDate();
+  String worksheetID = getSheetId(date);
+  final range = worksheetID;
+  final sinRange = "$worksheetID!C:C";
 
-  // Call the `spreadsheets.values.append` method of the Sheets API client to append the row.
-  final request = ValueRange()
-    ..values = [newRow.map((value) => value.toString()).toList()];
   final response =
       await sheetsApi.spreadsheets.values.get(spreadsheetId, range);
   // .append(
   //     request, spreadsheetId, range,
   //     valueInputOption: 'USER_ENTERED', insertDataOption: 'INSERT_ROWS');
-
-  final values = response.values;
+  final sinResponse =
+      await sheetsApi.spreadsheets.values.get(spreadsheetId, sinRange);
+  String colLetter = getColumnLetter(date, response);
+  print("column letter: $colLetter");
+  final values = sinResponse.values;
   int rowIndex = 0;
   for (var i = 0; i < values!.length; i++) {
     if (values[i][0] == sin) {
@@ -64,7 +60,8 @@ Future<void> createNewRow(sin, dairy_collected) async {
   }
 
   if (rowIndex != -1) {
-    final rangeToUpdate = "January!D${rowIndex + 1}:D${rowIndex + 1}";
+    final rangeToUpdate =
+        "$worksheetID!${colLetter}${rowIndex + 1}:${colLetter}${rowIndex + 1}";
     final valuesToUpdate = [
       [dairy_collected],
     ];
@@ -79,4 +76,71 @@ Future<void> createNewRow(sin, dairy_collected) async {
 
     print(updateResponse.updatedCells);
   }
+}
+
+List getDate() {
+  DateTime today = DateTime.now();
+  int year = today.year;
+  int month = today.month;
+  int day = today.day;
+  print("month $month");
+  print("year $year");
+  print("today $day");
+  return [year, month, day];
+}
+
+String monthAsString(month) {
+  Map<int, String> monthToString = {
+    1: "January",
+    2: "February",
+    3: "March",
+    4: "April",
+    5: "May",
+    6: "June",
+    7: "July",
+    8: "August",
+    9: "September",
+    10: "October",
+    11: "November",
+    12: "December",
+  };
+  // String out = "";
+
+  // if (monthToString.keys.contains(month)) {
+  //   out =
+  //   return monthToString[month];
+  // }
+  return monthToString[month] ?? "";
+}
+
+String getSheetId(date) {
+  int month = date[1];
+  String sYear = date[0].toString();
+  String sMonth = monthAsString(month);
+  return "${sMonth}_$sYear";
+}
+
+String getColumnLetter(date, response) {
+  String year = date[0].toString();
+  String month = date[1].toString();
+  String day = date[2].toString();
+  String frmt = "${month}/${day}";
+  print("format $frmt");
+  final values = response.values[0];
+  int colIndex = -1;
+
+  for (var i = 0; i < values.length; i++) {
+    print(values[i]);
+    if (values[i] == frmt) {
+      colIndex = i;
+      break;
+    }
+  }
+
+  if (colIndex != -1) {
+    final rangeAlphabet = String.fromCharCode('A'.codeUnitAt(0) + colIndex);
+    print(rangeAlphabet);
+    return rangeAlphabet;
+  }
+  return "fail";
 }
