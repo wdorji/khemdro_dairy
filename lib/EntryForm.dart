@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khemdro/backend/gsheets.dart';
 
 // An entry form widget that takes in SIN & amount of dairy collected
 class EntryForm extends StatefulWidget {
@@ -48,7 +49,10 @@ class _EntryFormState extends State<EntryForm> {
               const Text("Dairy Collected"),
               const TextField(),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  print("Pressed button!");
+                  createNewRow();
+                },
                 child: const Text('Submit entry'),
               )
             ],
