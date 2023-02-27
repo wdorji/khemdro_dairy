@@ -50,6 +50,7 @@ Future<void> createNewRow(sin, dairy_collected) async {
   print("column letter: $colLetter");
   final values = sinResponse.values;
   int rowIndex = 0;
+  print(values);
   for (var i = 0; i < values!.length; i++) {
     if (values[i][0] == sin) {
       // Row found!
@@ -133,12 +134,23 @@ String getColumnLetter(date, response) {
     print(values[i]);
     if (values[i] == frmt) {
       colIndex = i;
+      print(colIndex);
+
       break;
     }
   }
 
   if (colIndex != -1) {
-    final rangeAlphabet = String.fromCharCode('A'.codeUnitAt(0) + colIndex);
+    var rangeAlphabet = "";
+    final rem = colIndex % 26;
+    if ((rem == 0) && (colIndex <= 26)) {
+      rangeAlphabet = String.fromCharCode('A'.codeUnitAt(0) + colIndex);
+    } else {
+      for (var i = 0; i < (26 / (colIndex - rem)); i++) {
+        rangeAlphabet += "A";
+      }
+      rangeAlphabet += String.fromCharCode('A'.codeUnitAt(0) + rem);
+    }
     print(rangeAlphabet);
     return rangeAlphabet;
   }
