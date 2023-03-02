@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-showAlertDialog(BuildContext context, String message) {
+showAlertDialog(BuildContext context, String title, String message) {
   // set up the button
   Widget okButton = TextButton(
     child: Text("OK"),
@@ -11,7 +11,7 @@ showAlertDialog(BuildContext context, String message) {
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text("Invalid Credentials"),
+    title: Text(title),
     content: Text(message),
     actions: [
       okButton,

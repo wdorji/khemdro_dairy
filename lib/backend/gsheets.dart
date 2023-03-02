@@ -59,6 +59,9 @@ Future<void> createNewRow(sin, dairy_collected) async {
       break;
     }
   }
+  if (rowIndex == 0) {
+    throw ArgumentError("Specified SIN $sin was not found.");
+  }
 
   if (rowIndex != -1) {
     final rangeToUpdate =

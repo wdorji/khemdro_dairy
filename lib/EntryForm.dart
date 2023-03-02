@@ -43,26 +43,34 @@ class _EntryFormState extends State<EntryForm> {
     String _dairy_collected = "default";
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Color.fromARGB(255, 255, 200, 3),
+            backgroundColor: Color.fromRGBO(45, 92, 126, 1),
             title: const Text("Welcome to Khemdro Dairy")),
         body: Form(
           key: _formKey,
           child: Column(
             children: [
-              const Text("SIN"),
+              const SizedBox(height: 20),
+              Image.asset('images/khemdro_logo.jpg'),
+              const SizedBox(height: 20),
+              const Text("SIN", style: TextStyle(fontSize: 20)),
               TextFormField(
                 onSaved: (newValue) {
                   _SIN = newValue!;
                 },
               ),
-              const Text("Dairy Collected"),
+              const SizedBox(height: 20),
+              const Text("Dairy Collected", style: TextStyle(fontSize: 20)),
               TextFormField(
                 onSaved: (newValue) {
                   _dairy_collected = newValue!;
                 },
               ),
+              const SizedBox(height: 20),
               TextButton(
-                onPressed: () {
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                ),
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     print("Pressed button!");
@@ -72,20 +80,35 @@ class _EntryFormState extends State<EntryForm> {
                     try {
                       int.parse(_SIN);
                     } catch (e) {
-                      showAlertDialog(context, "Please enter valid SIN");
+                      showAlertDialog(context, "Invalid Credentials",
+                          "Please enter valid SIN");
                     }
                     try {
-                      double.parse(_dairy_collected);
+                      double _dairy_collected_dbl =
+                          double.parse(_dairy_collected);
+                      if (_dairy_collected_dbl < 0) {
+                        throw Exception();
+                      } else {
+                        try {
+                          await createNewRow(_SIN, _dairy_collected);
+                          showAlertDialog(context, "Success",
+                              "Entry for $_SIN has been submitted!");
+                        } on ArgumentError catch (e) {
+                          showAlertDialog(
+                              context, "Invalid Credentials", e.message);
+                        }
+                      }
                     } catch (e) {
-                      showAlertDialog(context, "Please enter valid dairy");
+                      showAlertDialog(context, "Invalid Credentials",
+                          "Please enter valid dairy");
                     }
-                    createNewRow(_SIN, _dairy_collected);
                   }
 
                   //
                 },
-                child: const Text('Submit entry'),
-              )
+                child:
+                    const Text('Submit entry', style: TextStyle(fontSize: 20)),
+              ),
             ],
           ),
         ));
