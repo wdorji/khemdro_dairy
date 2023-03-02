@@ -18,7 +18,7 @@ Future<AutoRefreshingAuthClient> authenticate() async {
     "client_x509_cert_url":
         "https://www.googleapis.com/robot/v1/metadata/x509/gsheets%40servir-sco-assets.iam.gserviceaccount.com"
   });
-
+  print("running authenticate");
   return await clientViaServiceAccount(
       credentials, [sheets.SheetsApi.spreadsheetsScope]);
 }
@@ -142,8 +142,8 @@ String getColumnLetter(date, response) {
 
   if (colIndex != -1) {
     var rangeAlphabet = "";
-    final rem = colIndex % 26;
-    if ((rem == 0) && (colIndex <= 26)) {
+    final rem = 26 % colIndex;
+    if (colIndex <= 26) {
       rangeAlphabet = String.fromCharCode('A'.codeUnitAt(0) + colIndex);
     } else {
       for (var i = 0; i < (26 / (colIndex - rem)); i++) {
